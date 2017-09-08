@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <!--店名-->
+    <property name="test" value="test"/>
+
+    <!--前缀区分-->
+    <appender name="test-common" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${dir}/${test}/${common}/current.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${dir}/${test}/${common}/%d{yyyy-MM-dd HH}.log</fileNamePattern>
+            <maxHistory>1440</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss} [%thread] %-5level %logger{100} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--前缀区分-->
+    <appender name="test-status" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${dir}/${test}/${status}/current.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${dir}/${test}/${status}/%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss} %logger{5} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="test.com.xyj.supermarket.rfid.RfidListener" level="info" additivity="false">
+        <appender-ref ref="test-status"/>
+    </logger>
+
+    <logger name="test.com.xyj.supermarket" level="debug">
+        <appender-ref ref="test-common"/>
+    </logger>
+</included>
