@@ -3,10 +3,7 @@ package com.xyj.supermarket.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.Inet6Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
+import java.net.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -18,6 +15,15 @@ public abstract class NetworkUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(NetworkUtils.class);
 
+    public static String getHost() {
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            logger.error("获取网络信息出错", e);
+            return null;
+        }
+    }
+
     public static List<String> findHosts() {
         try {
             return Collections.list(NetworkInterface.getNetworkInterfaces()).stream()
@@ -28,7 +34,7 @@ public abstract class NetworkUtils {
                     .collect(toList());
         } catch (SocketException e) {
             logger.error("获取网络信息出错", e);
-            return Collections.emptyList();
+            return null;
         }
     }
 

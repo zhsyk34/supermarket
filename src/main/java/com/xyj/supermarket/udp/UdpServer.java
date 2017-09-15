@@ -40,7 +40,7 @@ public final class UdpServer extends AbstractDaemonService {
 
             Channel channel = bootstrap.bind(Config.UDP_PORT).syncUninterruptibly().channel();
 
-            logger.info("{}[:{}]启动成功", this.getClass().getSimpleName(), Config.UDP_PORT);
+            logger.info("{}[{}:{}]启动成功", this.getClass().getSimpleName(), Config.TCP_HOST, Config.UDP_PORT);
             super.setStartup(true);
 
             channel.closeFuture().await();

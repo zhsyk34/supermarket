@@ -3,6 +3,7 @@ package com.xyj.supermarket.tcp;
 import com.xyj.supermarket.config.AbstractDaemonService;
 import com.xyj.supermarket.config.Config;
 import com.xyj.supermarket.util.LoggerUtils;
+import com.xyj.supermarket.util.NetworkUtils;
 import com.xyj.supermarket.util.ThreadUtils;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -16,8 +17,10 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 public final class TcpServer extends AbstractDaemonService {
@@ -31,6 +34,10 @@ public final class TcpServer extends AbstractDaemonService {
 
     @Override
     public void run() {
+        multiNetwork();
+    }
+
+    private void init(String host) throws Exception {
         ServerBootstrap bootstrap = new ServerBootstrap();
 
         EventLoopGroup mainGroup = new NioEventLoopGroup();
@@ -60,23 +67,46 @@ public final class TcpServer extends AbstractDaemonService {
         });
 
         try {
-            Channel channel = bootstrap.bind(Config.TCP_HOST, Config.TCP_PORT).sync().channel();
+            Channel channel = bootstrap.bind(host, Config.TCP_PORT).sync().channel();
 
             super.setStartup(true);
+            Config.TCP_HOST = host;
 
-            logger.info("{}[{}:{}]启动成功", this.getClass().getSimpleName(), Config.TCP_HOST, Config.TCP_PORT);
+            logger.info("{}[{}:{}]启动成功", this.getClass().getSimpleName(), host, Config.TCP_PORT);
 
             channel.closeFuture().sync();
-        } catch (Exception e) {
-            logger.error("{}启动失败", this.getClass().getSimpleName(), e);
+        } finally {
+            mainGroup.shutdownGracefully();
+            handleGroup.shutdownGracefully();
+        }
+    }
 
+    private void multiNetwork() {
+        List<String> hosts = NetworkUtils.findHosts();
+
+        while (CollectionUtils.isEmpty(hosts)) {
+            logger.error("正在获取网络信息...");
+            ThreadUtils.await(2000L);
+            hosts = NetworkUtils.findHosts();
+        }
+
+        for (String host : hosts) {
+            try {
+                init(host);
+
+                if (super.isStartup()) {
+                    break;
+                }
+            } catch (Exception e) {
+                logger.error("{} 在[{}]启动失败", this.getClass().getSimpleName(), host, e);
+            }
+        }
+
+        if (!super.isStartup()) {
             ThreadUtils.await(1000L);
 
             logger.error("尝试重新启动...");
             this.run();
-        } finally {
-            mainGroup.shutdownGracefully();
-            handleGroup.shutdownGracefully();
         }
     }
 }

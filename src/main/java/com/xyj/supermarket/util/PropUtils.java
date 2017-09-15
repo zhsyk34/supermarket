@@ -15,17 +15,13 @@ public abstract class PropUtils {
 
     private static final Logger logger = LoggerUtils.getLogger(PropUtils.class);
 
-    private static final String PROPERTIES_NAME = "xyj.properties";
+    private static final String LINUX_DIR = "/home/yd/Workspace/eStore/";
+    private static final String PROFILE = "xyj.properties";
 
     private static final Map<String, String> map = new HashMap<>();
 
     static {
-        final Resource resource;
-        if (System.getProperty("os.name").toLowerCase().startsWith("window")) {
-            resource = new ClassPathResource(PROPERTIES_NAME);
-        } else {
-            resource = new FileSystemResource("/home/yd/Workspace/" + PROPERTIES_NAME);
-        }
+        Resource resource = System.getProperty("os.name").toLowerCase().startsWith("window") ? new ClassPathResource(PROFILE) : new FileSystemResource(LINUX_DIR + PROFILE);
 
         if (resource.exists()) {
             try {
@@ -35,10 +31,10 @@ public abstract class PropUtils {
 
                 logger.info("配置文件加载完毕");
             } catch (IOException e) {
-                logger.error("加载配置文件{}出错...", PROPERTIES_NAME, e);
+                logger.error("加载配置文件{}出错...", PROFILE, e);
             }
         } else {
-            logger.error("配置文件{}不存在...", PROPERTIES_NAME);
+            logger.error("配置文件{}不存在...", PROFILE);
         }
     }
 
@@ -50,8 +46,4 @@ public abstract class PropUtils {
         return Integer.parseInt(getString(key));
     }
 
-    public static void main(String[] args) {
-        System.out.println(getString("xyj.host"));
-        System.out.println(getInt("xyj.port"));
-    }
 }

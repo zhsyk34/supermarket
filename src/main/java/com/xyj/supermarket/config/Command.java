@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class Command {
     private int action;
 
-    public static Command of(Action action) {
+    static Command of(Action action) {
         return Command.of(action.getType());
     }
 

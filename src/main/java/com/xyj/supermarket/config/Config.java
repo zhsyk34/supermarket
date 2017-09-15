@@ -1,6 +1,5 @@
 package com.xyj.supermarket.config;
 
-import com.xyj.supermarket.util.NetworkUtils;
 import com.xyj.supermarket.util.PropUtils;
 
 public abstract class Config {
@@ -20,11 +19,6 @@ public abstract class Config {
 
     static {
         STORE_NAME = PropUtils.getString("store.name");
-
-        TCP_HOST = NetworkUtils.findHosts().get(0);
-
-//        TCP_PORT = PropUtils.getInt("tcp.port");
-//        UDP_PORT = PropUtils.getInt("udp.port");
 
         RFID_SN = PropUtils.getString("rfid.sn");
         RFID_ANT = PropUtils.getInt("rfid.ant");

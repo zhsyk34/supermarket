@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
 
-    <property name="host" value="120.77.147.119"/>
+    <property name="host" value="47.94.252.28"/>
     <property name="port" value="1873"/>
 
-    <property name="dir" value="/home/yd/java-logs"/>
+    <property name="dir" value="/home/yd/Workspace/eStore/logs"/>
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -13,9 +13,9 @@
     </appender>
 
     <appender name="local" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${dir}/local/current.log</file>
+        <file>${dir}/current.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${dir}/local/%d{yyyy-MM-dd HH}.log</fileNamePattern>
+            <fileNamePattern>${dir}/%d{yyyy-MM-dd HH}.log</fileNamePattern>
             <maxHistory>168</maxHistory>
         </rollingPolicy>
         <encoder>
